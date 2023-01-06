@@ -1,4 +1,4 @@
-.PHONY: setup
+.PHONY: rm
 
 default:
 	docker compose up -d
@@ -7,6 +7,5 @@ down:
 	docker system prune -a
 
 rm:
-	rm -f -R *.log *.aux *.bbl *.blg *.dvi *.fdb_latexmk *.fls *.synctex.gz *.toc
-	cd kouzou \
-		&& rm -f -R *.log *.aux *.bbl *.blg *.dvi *.fdb_latexmk *.fls *.synctex.gz *.toc
+	rm -f -R *.aux *.bbl *.blg *.dvi *.fdb_latexmk \
+	 *.lof *lot *.fls *.synctex.gz *.toc
