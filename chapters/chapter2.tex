@@ -17,7 +17,7 @@
 
 \begin{figure}[b]
   \begin{center}
-   \includegraphics[width=80mm]{images/easy_chart.pdf}
+    \includegraphics[width=80mm]{images/easy_chart.pdf}
   \end{center}
   \caption{モデル概要}
   \label{easy_chart}
@@ -26,6 +26,28 @@
 \clearpage
 
 \subsection{使用する動画データ}
+動画は\ref{video_data}を使用した．
+\begin{table}[t]
+  \begin{center}
+    \begin{tabular}{|c|c|c|} \hline
+      ＼ & 学習用 & 推論用 \\ \hline
+      優美なダンス
+        & \cite{jpn}\cite{china}\cite{ballet}\cite{thai}\cite{jpn2}
+        & \cite{balletgroup}\cite{jpngroup}\cite{chinagroup}\cite{belly}
+      \\ \hline
+      普通のダンス
+        & \cite{ariana}\cite{kadokawa}\cite{bts}\cite{manolo}\cite{aito}
+        & \cite{btsgroup}\cite{arashi}\cite{hyoga}\cite{legit}
+      \\ \hline
+      その他の動作
+        & \cite{radio}\cite{posing}\cite{boxing}\cite{running}\cite{shinkokyu}\cite{leaves}
+        & \cite{radio2}
+      \\ \hline
+    \end{tabular}
+  \end{center}
+  \caption{使用した動画データ}
+  \label{video_data}
+\end{table}
 
 \subsection{ネットワーク構造}
 
