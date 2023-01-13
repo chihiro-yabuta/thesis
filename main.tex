@@ -1,72 +1,53 @@
-\documentclass[titlepage,a4pape]{jsarticle}
-\bibliographystyle{junsrt}
+\documentclass[12pt,titlepage]{jsarticle}
 \usepackage[dvipdfmx]{graphicx}
-\usepackage{lscape}
-\usepackage{here}
-\usepackage{bmpsize}
-\setlength{\topmargin}{10mm}
-\setlength{\headsep}{0mm}
-\setlength{\oddsidemargin}{-5mm}
-\setlength{\evensidemargin}{-5mm}
-\setlength{\textwidth}{17cm}
-\setlength{\textheight}{22cm}
-\setlength{\columnsep}{10mm}
-\setcounter{topnumber}{5}
-\def\topfraction{.7}
 \usepackage{amsmath}
 \usepackage{url}
-\usepackage{here}
-\usepackage{bm}
-\makeatletter
 \usepackage{comment}
-\newcommand{\figcaption}[1]{\def\@captype{figure}\caption{#1}}
-\newcommand{\tblcaption}[1]{\def\@captype{table}\caption{#1}}
-\makeatother
-\usepackage{amssymb}
-\usepackage[subrefformat=parens]{subcaption}
-\usepackage{longtable}
-\usepackage{siunitx}
-\usepackage[dvipdfmx]{colortbl}
+\usepackage{supertabular}
+\usepackage{cite}
+\usepackage{here}
 
-\title{\vspace{-15mm}{\LARGE 2023年度　卒業論文}\\\vspace{25mm}
-\huge
-深層学習を用いた優美さ特徴の抽出
-\vspace{20mm}\\}
+\title{\vspace{-15mm}{\LARGE 2022年度　卒業論文}\\\vspace{25mm}
+\huge 深層学習を用いた優美さ特徴の抽出\vspace{20mm}\\}
 
 \author{
-\Large 大阪工業大学ロボティクス＆デザイン工学部\\\\
+\Large 大阪工業大学　ロボティクス＆デザイン工学部\\\\
 \vspace{5mm}\Large ロボット工学科\\
-\vspace{5mm}
+\vspace{5mm}\Large
 \vspace{0mm}\\
 {\huge 薮田　千尋} \vspace{14.5mm}\\
 \\\Large 指導教員\\\\\vspace{-4.0mm}
-\vspace{0mm}\Large 上田悦子
+\vspace{0mm}\Large 上田　悦子
 }
+
 \date{}
 
-
 \begin{document}
+
 \maketitle
 \newpage
 
-\input{chapters/cover}
+\thispagestyle{empty}
+\section*{内容梗概}
+\input{chapters/abstract}
+
+\newpage
+\pagenumbering{roman}
+\setcounter{page}{1}
+\tableofcontents
+\newpage
+\listoffigures
+\listoftables
 \newpage
 
-\section{はじめに}
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
 \input{chapters/chapter1}
-
-\clearpage
-\section{舞踊分類ネットワーク}
 \input{chapters/chapter2}
-
-\clearpage
-\section{優美動作の評価}
 \input{chapters/chapter3}
-
-\section{おわりに}
 \input{chapters/chapter4}
-
-\clearpage
+\newpage
 
 \bibliography{chapters/papers}
 \bibliographystyle{jplain}
