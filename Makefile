@@ -8,4 +8,4 @@ down:
 
 rm:
 	rm -f -R *.aux *.bbl *.blg *.dvi *.fdb_latexmk \
-	 *.lof *lot *.fls *.synctex.gz *.toc
+	 *.lof *lot *.fls *.synctex.gz *.toc *.log *.pdf
