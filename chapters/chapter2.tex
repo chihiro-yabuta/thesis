@@ -104,5 +104,76 @@
 目標とするに最も近い動作のみを抽出することができると考えた．
 
 \subsection{ネットワーク構造}
+編集した動画をそのまま使用するとフレーム数が多いので動画を複数に分割することを考えた．
+図\ref{range}のように乱数を得た．乱数を視点として指定のフレーム長を切り取った．
+それらをバッチ数まで集めた．乱数は各データ毎に個別に作成する．
+
+動画群は結合して一つのデータとして扱うため，切り取る範囲が動画の繋ぎ目と被る可能性がある．
+それを防ぐため，図\ref{decide_rand}のように予めそれぞれの動画長のフレームを
+動画群から見た絶対数で保存しておく．指定した乱数がそれらの数値-指定フレームであった場合，
+乱数を指定フレーム分追加することで再計算することなく固有の動画から指定範囲切り抜くことができる．
+
+この手法は\cite{vivit}は着想を得た．ViViTでは動画を指定フレーム，指定ピクセルの
+立方体で切り出し，Transformer Encoderにかけるという手法を取っている．
+切り取った動画を検証するので動画全体を検証することはできないが，フレームを細かく分割することで
+優美さ特定がより円滑に進むと考えた．
+
+\begin{figure}[b]
+  \begin{center}
+    \includegraphics[width=120mm]{images/chart/range.pdf}
+  \end{center}
+  \caption{入力動画の分割方法}
+  \label{range}
+\end{figure}
+
+\begin{figure}[b]
+  \begin{center}
+    \includegraphics[width=120mm]{images/chart/decide_rand.pdf}
+  \end{center}
+  \caption{乱数の決定方法}
+  \label{decide_rand}
+\end{figure}
+\clearpage
+
+整形された動画データは二層の畳み込み層を通過する．
+64×64の二次元データが128の一次元データに畳み込まれる．
+
+次にピクセル情報を模した数値行列を同じ畳み込み層に通す．
+この行列は64×64サイズに0から順にインデックス番号を持つ長さ指定フレーム長の行列である．
+Transformerでは位置情報が喪失してしまうので位置情報を足し合わせることをする．
+畳み込み後のデータは動画データではないのでインデックス番号を畳み込みすることで
+同じ次元の位置情報を持たせることを試みた．
+
+\begin{figure}[b]
+  \begin{center}
+    \includegraphics[width=120mm]{images/chart/embedding.pdf}
+  \end{center}
+  \caption{embeddingデータ}
+  \label{embedding}
+\end{figure}
+
+加工された動画データと位置情報を足し合わせ，Transformer Encoderに通す．
+ヘッドを二つに分割したレイヤーを二つ重ね合わせた．
+これも\cite{vivit}に倣いこのような処理にした．実際，ヘッド数やレイヤー数は
+これが最も精度良く推論できた．
+\clearpage
+
+最後に全結合層に通す．データを3に集約させるため，層を5つに分割し慎重に取り出した．
+また，後半ではTanh(\ref{tanh})を活性化関数とすることでデータ全体が影響し合えるようにした．
+
+ネットワーク全体をフローチャートにすると図\ref{flowchart}のようになる．
+
+\begin{equation}
+  f(x) = \frac{e^x - e^{-x}}{e^x + e^{-x}}
+  \label{tanh}
+\end{equation}
+
+\begin{figure}[b]
+  \begin{center}
+    \includegraphics[width=120mm]{images/chart/flowchart.pdf}
+  \end{center}
+  \caption{ネットワーク全体}
+  \label{flowchart}
+\end{figure}
 
 \subsection{精度}
