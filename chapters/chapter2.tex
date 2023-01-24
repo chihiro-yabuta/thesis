@@ -30,7 +30,6 @@
 入力されるデータは，目標となる教師データtとネットワークから推論されたデータpである．
 それぞれの配列長はiとする．それらを上記の式に当てはめ，配列長iまで総和を取ることで
 推論がどれだけ目標に近いか1以下の数値で計算し，その値を元にAdamが各層の値を更新していく．
-
 \clearpage
 
 \begin{figure}[t]
@@ -42,44 +41,76 @@
 \end{figure}
 
 \subsection{使用する動画データ}
-動画は表\ref{video_data}を使用した．優美な動画の選定方法は，youtubeで優美，美しいなどの
-キーワードで検索し，再生回数の多く，視聴した時に優美であると感じたものを使用した．
-一つの国，舞踊の種類では目的である網羅的な学習を達成できないため，古今東西の舞踊を使用した．
-普通のダンスでは同じようにダンスなどのキーワードを持ち，再生回数が多く，
-視聴した時にダンスであると感じたものを使用した．その他の動作はランニングや体操など，
-日常的な動作を使用した．再生回数が多いものを使用する理由は，その舞踊のエキスパートの動作を
+動画は表\ref{video_data}を使用した．優美な動画の選定方法は，youtubeで「優美」「美しい」などの
+キーワードで検索し，再生回数の多く，主観で優美であると感じたものを使用した．
+国，舞踊の種類が単一であると目的である網羅的な学習を達成できないため，古今東西の舞踊を使用した．
+普通のダンスでは同じように「ダンス」「かっこいい」などのキーワードを持ち，再生回数が多いものを使用した．
+その他の動作は「ランニング」「体操」など，日常的な動作を使用した．
+再生回数が多いものを使用する理由は，その舞踊のエキスパートの動作を
 できるだけ使用したかったからである．再生回数が多いということは，それだけ不特定多数から
 注目を浴びている，感動を与えていると考えられ，その動作の熟練者である可能性が高いと考えた．
+\clearpage
 
-\begin{table}[b]
+\begin{table}[t]
   \begin{center}
-    \begin{tabular}{|c|c|c|} \hline
-      ＼ & 学習用 & 推論用 \\ \hline
-      優美なダンス
-        & \cite{jpn}\cite{china}\cite{ballet}\cite{thai}\cite{jpn2}
-        & \cite{balletgroup}\cite{jpngroup}\cite{chinagroup}\cite{belly}
+    \begin{tabular}{|c|c|c|c|c|c|} \hline
+      ＼ & \multicolumn{3}{|c|}{学習用} & \multicolumn{2}{|c|}{推論用} \\ \hline
+      \multirow{4}{*}{優美なダンス}
+        & \includegraphics[width=17mm]{images/snaps/japanese_elegant.png}
+        & \includegraphics[width=17mm]{images/snaps/chinese_elegant.png}
+        & \includegraphics[width=17mm]{images/snaps/ballet_elegant.png}
+        & \includegraphics[width=17mm]{images/snaps/ballet_group_elegant.png}
+        & \includegraphics[width=17mm]{images/snaps/japanese_group_elegant.png}
+      \\ \cline{2-6}
+        & \cite{jpn} & \cite{china} & \cite{ballet} & \cite{balletgroup} & \cite{jpngroup}
+      \\ \cline{2-6}
+        & \includegraphics[width=17mm]{images/snaps/thai_elegant.png}
+        & \includegraphics[width=17mm]{images/snaps/japanese2_elegant.png}
+        &
+        & \includegraphics[width=17mm]{images/snaps/chinese_group_elegant.png}
+        & \includegraphics[width=17mm]{images/snaps/belly_elegant.png}
+      \\ \cline{2-6}
+        & \cite{thai} & \cite{jpn2} & & \cite{chinagroup} & \cite{belly}
       \\ \hline
-      普通のダンス
-        & \cite{ariana}\cite{kadokawa}\cite{bts}\cite{manolo}\cite{aito}
-        & \cite{btsgroup}\cite{arashi}\cite{hyoga}\cite{legit}
+      \multirow{4}{*}{普通のダンス}
+        & \includegraphics[width=17mm]{images/snaps/ariana_dance.png}
+        & \includegraphics[width=17mm]{images/snaps/kadokawa_dream_dance.png}
+        & \includegraphics[width=17mm]{images/snaps/bts_dance.png}
+        & \includegraphics[width=17mm]{images/snaps/bts_group_dance.png}
+        & \includegraphics[width=17mm]{images/snaps/arashi_group_dance.png}
+      \\ \cline{2-6}
+        & \cite{ariana} & \cite{kadokawa} & \cite{bts} & \cite{btsgroup} & \cite{arashi}
+      \\ \cline{2-6}
+        & \includegraphics[width=17mm]{images/snaps/manolo_dance.png}
+        & \includegraphics[width=17mm]{images/snaps/aito_dance.png}
+        &
+        & \includegraphics[width=17mm]{images/snaps/hyoga_dance.png}
+        & \includegraphics[width=17mm]{images/snaps/legit_dance.png}
+      \\ \cline{2-6}
+        & \cite{manolo} & \cite{aito} & & \cite{hyoga} & \cite{legit}
       \\ \hline
-      その他の動作
-        & \cite{radio}\cite{posing}\cite{boxing}\cite{running}\cite{shinkokyu}\cite{leaves}
-        & \cite{radio2}
+      \multirow{4}{*}{その他の動作}
+        & \includegraphics[width=17mm]{images/snaps/radio_exer.png}
+        & \includegraphics[width=17mm]{images/snaps/posing.png}
+        & \includegraphics[width=17mm]{images/snaps/shadowboxing.png}
+        & \includegraphics[width=17mm]{images/snaps/radio_exer_2.png}
+        &
+      \\ \cline{2-6}
+        & \cite{radio} & \cite{posing} & \cite{boxing} & \cite{radio2} &
+      \\ \cline{2-6}
+        & \includegraphics[width=17mm]{images/snaps/running.png}
+        & \includegraphics[width=17mm]{images/snaps/shinkokyu.png}
+        & \includegraphics[width=17mm]{images/snaps/leaves.png}
+        &
+        &
+      \\ \cline{2-6}
+        & \cite{running} & \cite{shinkokyu} & \cite{leaves} & &
       \\ \hline
     \end{tabular}
   \end{center}
   \caption{使用した動画データ}
   \label{video_data}
 \end{table}
-
-\begin{figure}[t]
-  \begin{center}
-    \includegraphics[width=120mm]{images/chart/resize.pdf}
-  \end{center}
-  \caption{動画の縮小例}
-  \label{resize}
-\end{figure}
 
 動画の編集方法は，動画サイズを均一にするために図\ref{resize}のように縦横64ピクセルに縮小した．
 縦横短い方を基準に長い方の両端を切り出し，OpenCVのresize\cite{resize}にかけた．
@@ -101,6 +132,14 @@
 検証段階として，動画データをそのままネットワークにかけて学習した結果，精度が
 ほとんど取れなかったので，動画データの統一が効果的ではないかと考えた．
 二値に限定し，各ピクセル，動画全体のデータを均一にすることで学習の効率を高めることを試みた．
+
+\begin{figure}[b]
+  \begin{center}
+    \includegraphics[width=120mm]{images/chart/resize.pdf}
+  \end{center}
+  \caption{動画の縮小例}
+  \label{resize}
+\end{figure}
 
 \begin{figure}[b]
   \begin{center}
@@ -209,28 +248,29 @@ Transformerでは位置情報が喪失してしまうので位置情報を足し
 表\ref{result}のように動画を3つずつ増やした結果，精度が向上していることがわかった．
 
 \begin{table}[b]
-  \centering
-  \begin{tabular}{|c|} \hline
-    結果と使用動画 \\ \hline
-    \includegraphics[width=120mm]{images/net_result/result10.png}
-    \\
-    \cite{ballet}\cite{thai}\cite{jpn2}
-    \cite{kadokawa}\cite{bts}\cite{manolo}
-    \cite{posing}\cite{boxing}\cite{shinkokyu}\cite{leaves}
-    \\ \hline
-    \includegraphics[width=120mm]{images/net_result/result13.png}
-    \\
-    \cite{jpn}\cite{ballet}\cite{thai}\cite{jpn2}
-    \cite{ariana}\cite{kadokawa}\cite{bts}\cite{manolo}
-    \cite{posing}\cite{boxing}\cite{running}\cite{shinkokyu}\cite{leaves}
-    \\ \hline
-    \includegraphics[width=120mm]{images/net_result/result16.png}
-    \\
-    \cite{jpn}\cite{china}\cite{ballet}\cite{thai}\cite{jpn2}
-    \cite{ariana}\cite{kadokawa}\cite{bts}\cite{manolo}\cite{aito}
-    \cite{radio}\cite{posing}\cite{boxing}\cite{running}\cite{shinkokyu}\cite{leaves}
-    \\ \hline
-  \end{tabular}
+  \begin{center}
+    \begin{tabular}{|c|} \hline
+      結果と使用動画 \\ \hline
+      \includegraphics[width=120mm]{images/net_result/result10.png}
+      \\
+      \cite{ballet}\cite{thai}\cite{jpn2}
+      \cite{kadokawa}\cite{bts}\cite{manolo}
+      \cite{posing}\cite{boxing}\cite{shinkokyu}\cite{leaves}
+      \\ \hline
+      \includegraphics[width=120mm]{images/net_result/result13.png}
+      \\
+      \cite{jpn}\cite{ballet}\cite{thai}\cite{jpn2}
+      \cite{ariana}\cite{kadokawa}\cite{bts}\cite{manolo}
+      \cite{posing}\cite{boxing}\cite{running}\cite{shinkokyu}\cite{leaves}
+      \\ \hline
+      \includegraphics[width=120mm]{images/net_result/result16.png}
+      \\
+      \cite{jpn}\cite{china}\cite{ballet}\cite{thai}\cite{jpn2}
+      \cite{ariana}\cite{kadokawa}\cite{bts}\cite{manolo}\cite{aito}
+      \cite{radio}\cite{posing}\cite{boxing}\cite{running}\cite{shinkokyu}\cite{leaves}
+      \\ \hline
+    \end{tabular}
+  \end{center}
   \caption{使用動画別の精度}
   \label{result}
 \end{table}
@@ -244,16 +284,17 @@ Transformerでは位置情報が喪失してしまうので位置情報を足し
 一方推論時には層のデータが小さいと対応できない場面に多々出くわすので，バッチサイズは10程度が基準となっている．
 
 \begin{table}[b]
-  \centering
-  \begin{tabular}{|c|} \hline
-    結果とバッチサイズ \\ \hline
-    \includegraphics[width=120mm]{images/net_result/batch1.png}
-    \\ 1 \\ \hline
-    \includegraphics[width=120mm]{images/net_result/batch10.png}
-    \\ 10 \\ \hline
-    \includegraphics[width=120mm]{images/net_result/batch100.png}
-    \\ 100 \\ \hline
-  \end{tabular}
+  \begin{center}
+    \begin{tabular}{|c|} \hline
+      結果とバッチサイズ \\ \hline
+      \includegraphics[width=120mm]{images/net_result/batch1.png}
+      \\ batch:1 \\ \hline
+      \includegraphics[width=120mm]{images/net_result/batch10.png}
+      \\ batch:10 \\ \hline
+      \includegraphics[width=120mm]{images/net_result/batch100.png}
+      \\ batch:100 \\ \hline
+    \end{tabular}
+  \end{center}
   \caption{batch別の精度}
   \label{batch}
 \end{table}
@@ -271,16 +312,17 @@ Transformerでは位置情報が喪失してしまうので位置情報を足し
 判別することができることが分かった．
 
 \begin{table}[b]
-  \centering
-  \begin{tabular}{|c|} \hline
-    結果とエポック数 \\ \hline
-    \includegraphics[width=130mm]{images/net_result/epoch_1.pdf}
-    \\ 1 \\ \hline
-    \includegraphics[width=130mm]{images/net_result/epoch_2.pdf}
-    \\ 2 \\ \hline
-    \includegraphics[width=130mm]{images/net_result/epoch_10.pdf}
-    \\ 10 \\ \hline
-  \end{tabular}
+  \begin{center}
+    \begin{tabular}{|c|} \hline
+      結果とエポック数 \\ \hline
+      \includegraphics[width=130mm]{images/net_result/epoch_1.pdf}
+      \\ epoch:1 \\ \hline
+      \includegraphics[width=130mm]{images/net_result/epoch_2.pdf}
+      \\ epoch:2 \\ \hline
+      \includegraphics[width=130mm]{images/net_result/epoch_10.pdf}
+      \\ epoch:10 \\ \hline
+    \end{tabular}
+  \end{center}
   \caption{epoch毎の損失推移}
   \label{epoch}
 \end{table}
