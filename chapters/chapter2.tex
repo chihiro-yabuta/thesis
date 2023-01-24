@@ -106,7 +106,7 @@
 \subsection{ネットワーク構造}
 編集した動画をそのまま使用するとフレーム数が多いので動画を複数に分割することを考えた．
 図\ref{range}のように乱数を得た．乱数を視点として指定のフレーム長を切り取った．
-それらをバッチ数まで集めた．乱数は各データ毎に個別に作成する．
+それらをバッチ数まで集めた．乱数は各データ毎に個別に作成している．
 
 動画群は結合して一つのデータとして扱うため，切り取る範囲が動画の繋ぎ目と被る可能性がある．
 それを防ぐため，図\ref{decide_rand}のように予めそれぞれの動画長のフレームを
@@ -161,12 +161,12 @@ Transformerでは位置情報が喪失してしまうので位置情報を足し
 最後に全結合層に通す．データを3に集約させるため，層を5つに分割し慎重に取り出した．
 また，後半ではTanh(\ref{tanh})を活性化関数とすることでデータ全体が影響し合えるようにした．
 
-ネットワーク全体をフローチャートにすると図\ref{flowchart}のようになる．
-
 \begin{equation}
   f(x) = \frac{e^x - e^{-x}}{e^x + e^{-x}}
   \label{tanh}
 \end{equation}
+
+ネットワーク全体をフローチャートにすると図\ref{flowchart}のようになる．
 
 \begin{figure}[b]
   \begin{center}
@@ -175,5 +175,87 @@ Transformerでは位置情報が喪失してしまうので位置情報を足し
   \caption{ネットワーク全体}
   \label{flowchart}
 \end{figure}
+\clearpage
 
 \subsection{精度}
+作成したネットワークが学習できているか確認するために，動画数を変化させて
+その精度の推移を確認した．
+表\ref{result}のように動画を3つずつ増やした結果，精度が向上していることがわかった．
+
+\begin{table}[b]
+  \centering
+  \begin{tabular}{|c|} \hline
+    結果と使用動画 \\ \hline
+    \includegraphics[width=120mm]{images/net_result/result10.png}
+    \\
+    \cite{ballet}\cite{thai}\cite{jpn2}
+    \cite{kadokawa}\cite{bts}\cite{manolo}
+    \cite{posing}\cite{boxing}\cite{shinkokyu}\cite{leaves}
+    \\ \hline
+    \includegraphics[width=120mm]{images/net_result/result13.png}
+    \\
+    \cite{jpn}\cite{ballet}\cite{thai}\cite{jpn2}
+    \cite{ariana}\cite{kadokawa}\cite{bts}\cite{manolo}
+    \cite{posing}\cite{boxing}\cite{running}\cite{shinkokyu}\cite{leaves}
+    \\ \hline
+    \includegraphics[width=120mm]{images/net_result/result16.png}
+    \\
+    \cite{jpn}\cite{china}\cite{ballet}\cite{thai}\cite{jpn2}
+    \cite{ariana}\cite{kadokawa}\cite{bts}\cite{manolo}\cite{aito}
+    \cite{radio}\cite{posing}\cite{boxing}\cite{running}\cite{shinkokyu}\cite{leaves}
+    \\ \hline
+  \end{tabular}
+  \caption{使用動画別の精度}
+  \label{result}
+\end{table}
+\clearpage
+
+次にバッチサイズ別に精度の推移を確認した．バッチとは，データをひとまとめにして同時に学習させることである．
+表\ref{batch}のようにbatchが少ない方が学習データは精度良く学習できるが，推論時には10辺りが
+精度良く学習できることが分かった．
+
+バッチサイズを大きくするとそれぞれの層のデータも大きくなるので学習に対してはバッチサイズは小さな方が精度が出る．
+一方推論時には層のデータが小さいと対応できない場面に多々出くわすので，バッチサイズは10程度が基準となっている．
+
+\begin{table}[b]
+  \centering
+  \begin{tabular}{|c|} \hline
+    結果とバッチサイズ \\ \hline
+    \includegraphics[width=120mm]{images/net_result/batch1.png}
+    \\ 1 \\ \hline
+    \includegraphics[width=120mm]{images/net_result/batch10.png}
+    \\ 10 \\ \hline
+    \includegraphics[width=120mm]{images/net_result/batch100.png}
+    \\ 100 \\ \hline
+  \end{tabular}
+  \caption{batch別の精度}
+  \label{batch}
+\end{table}
+\clearpage
+
+今回の実験でバッチサイズ10が効率よく検証できる結果となったので判断根拠可視化でもこれを採用することとした．
+
+次に学習，エポック毎で損失がどのように推移するか確認した．エポックとは，同一のデータを
+繰り返し学習させることである．
+表\ref{epoch}のように1回目のエポックでほとんど収束して行き，エポックを重ねるごとに
+その値の揺れが小さくなっていることが分かった．
+
+これらのことから制作したネットワークが正常に学習を進めていることが分かった．
+また，学習データに対して8割程度の精度であったとしても，推論時も7.5割程度で
+判別することができることが分かった．
+
+\begin{table}[b]
+  \centering
+  \begin{tabular}{|c|} \hline
+    結果とエポック数 \\ \hline
+    \includegraphics[width=130mm]{images/net_result/epoch_1.pdf}
+    \\ 1 \\ \hline
+    \includegraphics[width=130mm]{images/net_result/epoch_2.pdf}
+    \\ 2 \\ \hline
+    \includegraphics[width=130mm]{images/net_result/epoch_10.pdf}
+    \\ 10 \\ \hline
+  \end{tabular}
+  \caption{epoch毎の損失推移}
+  \label{epoch}
+\end{table}
+\clearpage
