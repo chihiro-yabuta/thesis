@@ -173,7 +173,8 @@
 \subsection{ネットワーク構造}
 編集した動画をそのまま使用するとフレーム数が多いので動画を複数に分割することを考えた．
 図\ref{range}のように乱数を得た．乱数を視点として指定のフレーム長を切り取った．
-それらをバッチ数まで集めた．乱数は各データ毎に個別に作成している．
+それらをバッチ数まで集めた．バッチとは，データをひとまとめにして同時に学習させることである．
+乱数は各データ毎に個別に作成している．
 
 動画群は結合して一つのデータとして扱うため，切り取る範囲が動画の繋ぎ目と被る可能性がある．
 それを防ぐため，図\ref{decide_rand}のように予めそれぞれの動画長方向のフレームを
@@ -202,16 +203,25 @@
 \end{figure}
 \clearpage
 
-整形された動画データは二層の畳み込み層を通過する．
-64×64の二次元データが128の一次元データに畳み込まれる．
+\begin{figure}[t]
+  \begin{center}
+    \includegraphics[width=80mm]{images/chart/conv.pdf}
+  \end{center}
+  \caption{畳み込み層}
+  \label{conv}
+\end{figure}
 
-次にピクセル情報を模した数値行列を同じ畳み込み層に通す．
-この行列は64×64サイズに0から順にインデックス番号を持つ長さ指定フレーム長の行列である．
-Transformerでは位置情報が喪失してしまうので位置情報を足し合わせることをする．
-畳み込み後のデータは動画データではないのでインデックス番号を畳み込みすることで
-同じ次元の位置情報を持たせることを試みた．
+整形された動画データは図\ref{conv}のような畳み込み層を通過する．
+入力データは[バッチ，フレーム長，画素数（グレースケールなので1），画像の縦データ，画像の横データ]の
+5次元データである．これをそのまま処理しようとすると3次元の畳み込みを
+使用する必要があり，動画像として処理したい今回にはそぐわない．
+これを解決するために畳み込み層をバッチ数だけ存在させ，入力データをバッチ数だけ分割した．
+これにより，[フレーム長，画素数（グレースケールなので1），画像の縦データ，画像の横データ]の
+4次元データで処理させることができ，フレームをバッチに見立てることで
+畳み込みの得意とする画像としての処理を実現させた．
+\clearpage
 
-\begin{figure}[b]
+\begin{figure}[t]
   \begin{center}
     \includegraphics[width=120mm]{images/chart/embedding.pdf}
   \end{center}
@@ -219,14 +229,39 @@ Transformerでは位置情報が喪失してしまうので位置情報を足し
   \label{embedding}
 \end{figure}
 
-加工された動画データと位置情報を足し合わせ，Transformer Encoderに通す．
-ヘッドを二つに分割したレイヤーを二つ重ね合わせた．
-これもViViTに倣いこのような処理にした．実際，ヘッド数やレイヤー数は
-これが最も精度良く推論できた．
+次に図\ref{embedding}のようなピクセル情報を模した数値行列を同じ畳み込み層に通す．
+この行列は64×64サイズに0から順にインデックス番号を持つ長さ指定フレーム長の行列である．
+Transformerでは位置情報が喪失してしまうので位置情報を足し合わせることをする．
+畳み込み後のデータは加工された動画データなのでインデックス番号を畳み込みすることで
+同じ次元の位置情報を持たせることを試みた．
 \clearpage
 
+\begin{figure}[t]
+  \begin{center}
+    \includegraphics[width=130mm]{images/quote/encoder.png}
+  \end{center}
+  \caption{ViViTのEncoderモデル}
+  \label{encoder}
+\end{figure}
+
+加工された動画データと位置情報を足し合わせ，Transformer Encoderに通す．
+ヘッドを二つに分割したレイヤーを二つ重ね合わせた．
+これもViViTに倣い図\ref{encoder}のような処理にした．実際，ヘッド数やレイヤー数は
+これが最も精度良く推論できた．
+
 最後に全結合層に通す．データを3に集約させるため，層を5つに分割し慎重に取り出した．
-また，後半ではTanh(\ref{tanh})を活性化関数とすることでデータ全体が影響し合えるようにした．
+また，前半ではReLU(\ref{relu})活性化関数とすることでデータを減らし，
+後半ではTanh(\ref{tanh})を活性化関数とすることでデータが影響し合えるようにした．
+
+\begin{equation}
+  \left\{
+    \begin{array}{ll}
+      f(x) = 0 & x \leq 0 \\
+      f(x) = x & x > 0
+    \end{array}
+  \right.
+  \label{relu}
+\end{equation}
 
 \begin{equation}
   f(x) = \frac{e^x - e^{-x}}{e^x + e^{-x}}
@@ -237,7 +272,7 @@ Transformerでは位置情報が喪失してしまうので位置情報を足し
 
 \begin{figure}[b]
   \begin{center}
-    \includegraphics[width=120mm]{images/chart/flowchart.pdf}
+    \includegraphics[width=130mm]{images/chart/flowchart.pdf}
   \end{center}
   \caption{ネットワーク全体}
   \label{flowchart}
@@ -253,23 +288,23 @@ Transformerでは位置情報が喪失してしまうので位置情報を足し
   \begin{center}
     \begin{tabular}{|c|} \hline
       結果と使用動画 \\ \hline
-      \includegraphics[width=120mm]{images/net_result/result10.png}
+        \includegraphics[width=110mm]{images/net_result/result10.png}
       \\
-      \cite{ballet}\cite{thai}\cite{jpn2}
-      \cite{kadokawa}\cite{bts}\cite{manolo}
-      \cite{posing}\cite{boxing}\cite{shinkokyu}\cite{leaves}
+        \cite{ballet}\cite{thai}\cite{jpn2}
+        \cite{kadokawa}\cite{bts}\cite{manolo}
+        \cite{posing}\cite{boxing}\cite{shinkokyu}\cite{leaves}
       \\ \hline
-      \includegraphics[width=120mm]{images/net_result/result13.png}
+        \includegraphics[width=110mm]{images/net_result/result13.png}
       \\
-      \cite{jpn}\cite{ballet}\cite{thai}\cite{jpn2}
-      \cite{ariana}\cite{kadokawa}\cite{bts}\cite{manolo}
-      \cite{posing}\cite{boxing}\cite{running}\cite{shinkokyu}\cite{leaves}
+        \cite{jpn}\cite{ballet}\cite{thai}\cite{jpn2}
+        \cite{ariana}\cite{kadokawa}\cite{bts}\cite{manolo}
+        \cite{posing}\cite{boxing}\cite{running}\cite{shinkokyu}\cite{leaves}
       \\ \hline
-      \includegraphics[width=120mm]{images/net_result/result16.png}
+        \includegraphics[width=110mm]{images/net_result/result16.png}
       \\
-      \cite{jpn}\cite{china}\cite{ballet}\cite{thai}\cite{jpn2}
-      \cite{ariana}\cite{kadokawa}\cite{bts}\cite{manolo}\cite{aito}
-      \cite{radio}\cite{posing}\cite{boxing}\cite{running}\cite{shinkokyu}\cite{leaves}
+        \cite{jpn}\cite{china}\cite{ballet}\cite{thai}\cite{jpn2}
+        \cite{ariana}\cite{kadokawa}\cite{bts}\cite{manolo}\cite{aito}
+        \cite{radio}\cite{posing}\cite{boxing}\cite{running}\cite{shinkokyu}\cite{leaves}
       \\ \hline
     \end{tabular}
   \end{center}
@@ -278,23 +313,21 @@ Transformerでは位置情報が喪失してしまうので位置情報を足し
 \end{table}
 \clearpage
 
-次にバッチサイズ別に精度の推移を確認した．バッチとは，データをひとまとめにして同時に学習させることである．
-表\ref{batch}のようにbatchが少ない方が学習データは精度良く学習できるが，推論時には10辺りが
-精度良く学習できることが分かった．
-
-バッチサイズを大きくするとそれぞれの層のデータも大きくなるので学習に対してはバッチサイズは小さな方が精度が出る．
-一方推論時には層のデータが小さいと対応できない場面に多々出くわすので，バッチサイズは10程度が基準となっている．
+次にバッチサイズ別に精度の推移を確認した．
+表\ref{batch}のようにバッチが少ないほど学習，推論共に精度が高いことが確認された．
+一般にバッチは処理時間の短縮のために使われる．1回に処理するデータが少ない方が精度は
+高くなるが，その分用意したデータを全て学習するのに時間がかかる．
+また，3章で使用するGrad Camでは判断根拠可視化のために大量のデータを必要とするので
+バッチ数が少ないとその特徴がほとんど現れないことを確認している．
+よって3章ではバッチ数10，100を使用することとした．
 
 \begin{table}[b]
   \begin{center}
     \begin{tabular}{|c|} \hline
       結果とバッチサイズ \\ \hline
-      \includegraphics[width=120mm]{images/net_result/batch1.png}
-      \\ batch:1 \\ \hline
-      \includegraphics[width=120mm]{images/net_result/batch10.png}
-      \\ batch:10 \\ \hline
-      \includegraphics[width=120mm]{images/net_result/batch100.png}
-      \\ batch:100 \\ \hline
+        \includegraphics[width=110mm]{images/net_result/batch1.png} \\ batch:1 \\ \hline
+        \includegraphics[width=110mm]{images/net_result/batch10.png} \\ batch:10 \\ \hline
+        \includegraphics[width=110mm]{images/net_result/batch100.png} \\ batch:100 \\ \hline
     \end{tabular}
   \end{center}
   \caption{batch別の精度}
@@ -317,12 +350,9 @@ Transformerでは位置情報が喪失してしまうので位置情報を足し
   \begin{center}
     \begin{tabular}{|c|} \hline
       結果とエポック数 \\ \hline
-      \includegraphics[width=130mm]{images/net_result/epoch_1.pdf}
-      \\ epoch:1 \\ \hline
-      \includegraphics[width=130mm]{images/net_result/epoch_2.pdf}
-      \\ epoch:2 \\ \hline
-      \includegraphics[width=130mm]{images/net_result/epoch_10.pdf}
-      \\ epoch:10 \\ \hline
+        \includegraphics[width=130mm]{images/net_result/epoch_1.pdf} \\ epoch:1 \\ \hline
+        \includegraphics[width=130mm]{images/net_result/epoch_2.pdf} \\ epoch:2 \\ \hline
+        \includegraphics[width=130mm]{images/net_result/epoch_10.pdf} \\ epoch:10 \\ \hline
     \end{tabular}
   \end{center}
   \caption{epoch毎の損失推移}
