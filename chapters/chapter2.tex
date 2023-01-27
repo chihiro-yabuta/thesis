@@ -54,7 +54,7 @@
 \begin{table}[t]
   \begin{center}
     \begin{tabular}{|c|ccc|cc|} \hline
-      ＼ & \multicolumn{3}{|c|}{学習用} & \multicolumn{2}{|c|}{推論用} \\ \hline
+        & \multicolumn{3}{|c|}{学習用} & \multicolumn{2}{|c|}{推論用} \\ \hline
         &&&&& \\
         & \includegraphics[width=17mm]{images/snaps/japanese_elegant.png}
         & \includegraphics[width=17mm]{images/snaps/chinese_elegant.png}
@@ -319,7 +319,7 @@ Transformerでは位置情報が喪失してしまうので位置情報を足し
 高くなるが，その分用意したデータを全て学習するのに時間がかかる．
 また，3章で使用するGrad Camでは判断根拠可視化のために大量のデータを必要とするので
 バッチ数が少ないとその特徴がほとんど現れないことを確認している．
-よって3章ではバッチ数10，100を使用することとした．
+よって3章ではバッチ数10を使用することとした．
 
 \begin{table}[b]
   \begin{center}
@@ -334,8 +334,6 @@ Transformerでは位置情報が喪失してしまうので位置情報を足し
   \label{batch}
 \end{table}
 \clearpage
-
-今回の実験でバッチサイズ10が効率よく検証できる結果となったので判断根拠可視化でもこれを採用することとした．
 
 次に学習，エポック毎で損失がどのように推移するか確認した．エポックとは，同一のデータを
 繰り返し学習させることである．

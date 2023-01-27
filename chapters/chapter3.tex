@@ -62,7 +62,7 @@ Pytorch-GradCamは入力データに対してどのように各層が影響す�
 
 このようにして出力されたGrad Camの動画と二値化動画を横に繋ぎ合わせ，どのような特徴があるか
 観察した．すると図\ref{examples}のような特徴を観測した．
-ここで確率分布は
+ここで判断根拠分布は
 \begin{enumerate}
   \item 優美なダンスは画面「下部」に「広く」分布している \\
         領域を大きく使っていることから手足を頻繁に使う \\
@@ -71,7 +71,96 @@ Pytorch-GradCamは入力データに対してどのように各層が影響す�
   \item その他の動作は画面「上部」に「広く」分布している
 \end{enumerate}
 という仮説を立てた．この仮説を検証するため，それぞれの動画に対して
-縦に三つに分割した時の確率分布率を算出した．
+縦に三つに分割した時の判断根拠分布率を算出した．
+\clearpage
+
+\begin{figure}[t]
+  \begin{center}
+    \includegraphics[width=120mm]{images/chart/divide.pdf}
+  \end{center}
+  \caption{Grad Cam動画の画素計算方法}
+  \label{divide_graph}
+\end{figure}
+
+図\ref{divide_graph}のようにGrad Cam動画データを縦に三分割した．
+黒画素以外の個数を数え，それを指定領域数で割ることでその領域に占める
+判断根拠の分布率を算出した．
+
+その結果，図\ref{devide_summary}のような数値を得た．いくつかの動画について，
+優美なダンスでは「中部」「下部」に広く分布していることが分かった．
+入力データに複数人で踊っているデータが存在していたり，そもそも精度の悪い動画も
+存在しているので相関は薄く推測の域は出ないが，いくつかの動画では，
+領域を大きく使っていることから手足を頻繁に使う動作が優美と判定されているように思う．
+逆に，普通のダンスはいくつかの動画では分布が狭い，つまり画面中央に密集しており，
+体幹移動を頻繁に使うのではないかと考える．
+
+\begin{table}[t]
+  \begin{center}
+    \begin{tabular}{|c|p{5mm}p{5mm}p{5mm}|p{5mm}p{5mm}p{5mm}|p{5mm}p{5mm}p{5mm}|p{5mm}p{5mm}p{5mm}|} \hline
+        & \multicolumn{6}{|c|}{学習用} & \multicolumn{6}{|c|}{推論用} \\ \cline{2-13}
+        &上 &中 &下 &上 &中 &下 &上 &中 &下 &上 &中 &下 \\ \hline
+        &2.1 &34.4 &62.8 &10.8 &16.9 &48.8 &0.0 &43.2 &38.2 &40.6 &71.2 &72.4 \\
+        & \multicolumn{3}{|c|}{\includegraphics[width=18mm]{images/snaps/japanese_elegant.png}}
+        & \multicolumn{3}{|c|}{\includegraphics[width=18mm]{images/snaps/chinese_elegant.png}}
+        & \multicolumn{3}{|c|}{\includegraphics[width=18mm]{images/snaps/ballet_group_elegant.png}}
+        & \multicolumn{3}{|c|}{\includegraphics[width=18mm]{images/snaps/japanese_group_elegant.png}}
+      \\ \cline{2-13}
+      優美
+        &6.8 &60.0 &31.4 &48.3 &71.6 &33.8 &1.3 &48.1 &54.7 &6.3 &28.5 &52.1 \\
+        & \multicolumn{3}{|c|}{\includegraphics[width=18mm]{images/snaps/ballet_elegant.png}}
+        & \multicolumn{3}{|c|}{\includegraphics[width=18mm]{images/snaps/thai_elegant.png}}
+        & \multicolumn{3}{|c|}{\includegraphics[width=18mm]{images/snaps/chinese_group_elegant.png}}
+        & \multicolumn{3}{|c|}{\includegraphics[width=18mm]{images/snaps/belly_elegant.png}}
+      \\ \cline{2-13}
+        &28.0 &11.7 &24.7 & & & & & & & & & \\
+        & \multicolumn{3}{|c|}{\includegraphics[width=18mm]{images/snaps/japanese2_elegant.png}}
+        & \multicolumn{3}{|c|}{}
+        & \multicolumn{3}{|c|}{}
+        & \multicolumn{3}{|c|}{}
+      \\ \hline
+        &16.0 &42.5 &36.6 &21.4 &32.0 &27.4 &79.8 &72.9 &59.5 &13.8 &75.5 &22.4 \\
+        & \multicolumn{3}{|c|}{\includegraphics[width=18mm]{images/snaps/ariana_dance.png}}
+        & \multicolumn{3}{|c|}{\includegraphics[width=18mm]{images/snaps/kadokawa_dream_dance.png}}
+        & \multicolumn{3}{|c|}{\includegraphics[width=18mm]{images/snaps/bts_group_dance.png}}
+        & \multicolumn{3}{|c|}{\includegraphics[width=18mm]{images/snaps/arashi_group_dance.png}}
+      \\ \cline{2-13}
+      普通
+        &11.4 &38.4 &13.6 &31.6 &47.9 &50.3 &12.5 &26.2 &4.8 &15.4 &8.3 &22.4 \\
+        & \multicolumn{3}{|c|}{\includegraphics[width=18mm]{images/snaps/bts_dance.png}}
+        & \multicolumn{3}{|c|}{\includegraphics[width=18mm]{images/snaps/manolo_dance.png}}
+        & \multicolumn{3}{|c|}{\includegraphics[width=18mm]{images/snaps/hyoga_dance.png}}
+        & \multicolumn{3}{|c|}{\includegraphics[width=18mm]{images/snaps/legit_dance.png}}
+      \\ \cline{2-13}
+        &19.6 &63.8 &54.8 & & & & & & & & & \\
+        & \multicolumn{3}{|c|}{\includegraphics[width=18mm]{images/snaps/aito_dance.png}}
+        & \multicolumn{3}{|c|}{}
+        & \multicolumn{3}{|c|}{}
+        & \multicolumn{3}{|c|}{}
+      \\ \hline
+        &52.6 &59.3 &21.2 &32.0 &33.3 &31.3 &41.8 &57.8 &22.3 & & & \\
+        & \multicolumn{3}{|c|}{\includegraphics[width=18mm]{images/snaps/radio_exer.png}}
+        & \multicolumn{3}{|c|}{\includegraphics[width=18mm]{images/snaps/posing.png}}
+        & \multicolumn{3}{|c|}{\includegraphics[width=18mm]{images/snaps/radio_exer_2.png}}
+        & \multicolumn{3}{|c|}{}
+      \\ \cline{2-13}
+      他
+        &35.4 &68.7 &78.3 &15.5 &62.3 &75.9 & & & & & & \\
+        & \multicolumn{3}{|c|}{\includegraphics[width=18mm]{images/snaps/shadowboxing.png}}
+        & \multicolumn{3}{|c|}{\includegraphics[width=18mm]{images/snaps/running.png}}
+        & \multicolumn{3}{|c|}{}
+        & \multicolumn{3}{|c|}{}
+      \\ \cline{2-13}
+        &81.5 &49.5 &45.2 &40.0 &52.5 &47.2 & & & & & & \\
+        & \multicolumn{3}{|c|}{\includegraphics[width=18mm]{images/snaps/shinkokyu.png}}
+        & \multicolumn{3}{|c|}{\includegraphics[width=18mm]{images/snaps/leaves.png}}
+        & \multicolumn{3}{|c|}{}
+        & \multicolumn{3}{|c|}{}
+      \\ \hline
+    \end{tabular}
+  \end{center}
+  \caption{算出された判断根拠分布率[％]}
+  \label{devide_summary}
+\end{table}
 \clearpage
 
 \subsection{確率分布を用いた評価}
