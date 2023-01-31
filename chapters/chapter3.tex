@@ -1,14 +1,14 @@
 \section{優美動作の評価}
 
 \subsection{従来手法}
-上田研ではこれまで多くのモデルが提唱されてきた．
+ヒューマンモデリング研究室ではこれまで多くのモデルが提唱されてきた．
 その多くは稲津\cite{inazu2}の全曲率計算を起源としている．
 先に挙げたB-spline近似で手先軌道を曲線近似し，図\ref{curves}のように
 全曲率$\mu$が0.87〜1.31となる曲線を多く含むものを優美としている．
 そこから面積や角度に派生するモデルも存在するが，根底は手先軌道である．
 今回作成したネットワークが「優美」と判定したものは動画のどの箇所を根拠に
 「優美」と判断したのか，動作を抽出して検証する際，どこに着目すべきと
-示唆しているかなどを検証した．
+示唆しているかなどを検証し，その相違点，共通点を特定した．
 
 \begin{figure}[b]
   \begin{center}
@@ -23,11 +23,11 @@
 使用した．作成したネットワークはPytorch\cite{pytorch}でできているので，GradCamも
 同じくPytorchでできたものを使用した．
 
-Pytorch-GradCamは入力データに対してどのように各層が影響するか順伝播で確認してから，
-逆伝播で影響の強弱を1以下の数値で返す．今回のネットワークでは動画をフレーム毎に区切るので
+Pytorch-GradCamは入力データに対して，どのように各層が影響するかを順伝播で確認してから，
+逆伝播で影響の強弱を1以下の数値で返す．今回のネットワークでは動画をフレームごとに区切るので，
 1フレームずつ処理すると図\ref{camgraph}のように最大30回重複するデータが存在する．
-よって出力された結果を順番に足し合わせ，特定のデータについて足し合わされた回数で各値を割ることで
-データの均一化を図った．データは1以下にあるので255をかけることでデータの強弱を動画として可視化した．
+よって出力された結果を順番に足し合わせ，特定のデータについて足し合わされた回数で各値を割り，
+データの均一化を図った．データは1以下の値を取るので，255倍してデータの強弱を動画として可視化した．
 また，数値は小さいが，データが離散しているので閾値0.4以下の値は0とした．
 
 \begin{figure}[b]
@@ -190,10 +190,10 @@ Grad Camの動画生成と同様の手法で，
 
 \begin{table}[b]
   \begin{center}
-    \begin{tabular}{|c|} \hline
-      \includegraphics[width=100mm]{images/dist/thai_elegant_900.pdf} \\ タイ:500〜900 \\ \hline
-      \includegraphics[width=100mm]{images/dist/japanese_elegant_2000.pdf} \\ 日本:1500〜2000 \\ \hline
-      \includegraphics[width=100mm]{images/dist/chinese_elegant_1500.pdf} \\ 中国:1000〜1500 \\ \hline
+    \begin{tabular}{c}
+      \includegraphics[width=100mm]{images/dist/thai_elegant_900.pdf} \\ タイ:500〜900 \\
+      \includegraphics[width=100mm]{images/dist/japanese_elegant_2000.pdf} \\ 日本:1500〜2000 \\
+      \includegraphics[width=100mm]{images/dist/chinese_elegant_1500.pdf} \\ 中国:1000〜1500 \\
     \end{tabular}
   \end{center}
   \caption{確率分布出力結果のグラフと対象舞踊フレーム数}
@@ -205,7 +205,7 @@ Grad Camの動画生成と同様の手法で，
 今回の評価では大きな成果は得られなかったが，AIを用いることで
 モデルベースでは時間的，フォーマット的に扱えなかったデータを扱うことができた．
 しかし，特徴を漠然としか捉えることができず，現段階では，モデルベースと学習ベースの
-二つの併用運用が考えられる．
+二つの併用運用が望ましい．
 
 表\ref{json}のように動画から体の部位を抽出できるAIフレームワークのOpenposeを使用して手先軌道を
 取得し，特徴の意図を汲み取る試みも行ったが，外れ値がデータのほとんどを占めており，
@@ -225,8 +225,8 @@ Grad Camの結果から考察した仮説である
 
 \begin{table}[b]
   \begin{center}
-    \begin{tabular}{|c|} \hline
-      \includegraphics[width=130mm]{images/dist/thai_elegant_json.pdf} \\ \hline
+    \begin{tabular}{c}
+      \includegraphics[width=130mm]{images/dist/thai_elegant_json.pdf} \\
     \end{tabular}
   \end{center}
   \caption{Openposeから抽出したタイ舞踊:700〜800フレームの手先起動}

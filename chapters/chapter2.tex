@@ -3,20 +3,20 @@
 \subsection{モデル概要}
 今回のモデルでは入力された動画を[優美なダンス，普通のダンス，その他の動作]に分類した．
 モデルから直接に入力動画のどこが優美か特定させることは困難だと考え，まずは動画をクラス分類することを
-考えた．研究の初期段階では[優美なダンス，その他の動作]の二値分類を学習させたが，主に
+目標とした．研究の初期段階では[優美なダンス，その他の動作]の二値分類を学習させたが，主に
 優美ではないダンスの精度が著しく低迷しており，そのほとんどが優美に分類された．
 
-ここから考えられることとして，[優美なダンス，その他の動作]と分類しようとしていたところが，
-[リズミカルな動作，その他の動作]と分類されたことが考えられた．
-ここで優美なダンスと普通のダンスを「リズミカルな動作」という大きな括りの中に属していることを考えると
-優美なダンスとその他の動作のみで普通のダンスを区別することは困難に思われた．
+ここから，[優美なダンス，その他の動作]と分類しようとしていたところが，
+[リズミカルな動作，その他の動作]と分類されたことに起因している．
+ここで優美なダンスと普通のダンスが「リズミカルな動作」という大きな括りの中に属していることを考えると
+優美なダンスとその他の動作のみで普通のダンスを区別することは困難であると判断した．
 そこで優美なダンスと普通のダンスを区別してクラス分けすることで精度が飛躍的に上昇した．
 
 モデルを簡単なフローチャートで表現すると図\ref{easy_chart}のようになる．
 \begin{enumerate}
   \item 動画を特殊な二値化手法で編集する．詳細は2.2節で述べる．
   \item 二値データと，それに対応するピクセル番号を畳み込む．
-  \item 二つのデータを足し合わせる．
+  \item 畳み込み後の動画データ及びピクセル番号を足し合わせる．
   \item Transformer Encoderに通した後，全結合し，Softmaxにかける．
 \end{enumerate}
 のようにモデル内で計算し，クラス分けを実現した．
@@ -27,8 +27,8 @@
   \label{entropy}
 \end{equation}
 
-入力されるデータは，目標となる教師データtとネットワークから推論されたデータpである．
-それぞれの配列長はiとする．それらを上記の式に当てはめ，配列長iまで総和を取ることで
+入力されるデータは，目標となる教師データ$t$とネットワークから推論されたデータ$p$である．
+それぞれの配列長は$i$とする．それらを上記の式に当てはめ，配列長$i$まで総和を取ることで
 推論がどれだけ目標に近いか1以下の数値で計算し，その値を元にAdamが各層の値を更新する．
 \clearpage
 
@@ -41,70 +41,70 @@
 \end{figure}
 
 \subsection{使用する動画データ}
-動画は表\ref{video_data}を使用した．優美な動画の選定方法は，youtubeで「優美」「美しい」などの
+使用した動画データを表\ref{video_data}にまとめる．優美な動画の選定方法は，YouTubeで「優美」「美しい」などの
 キーワードで検索し，再生回数の多く，主観で優美であると感じたものを使用した．
 国，舞踊の種類が単一であると目的である網羅的な学習を達成できないため，古今東西の舞踊を使用した．
 普通のダンスでは同じように「ダンス」「かっこいい」などのキーワードを持ち，再生回数が多いものを使用した．
 その他の動作は「ランニング」「体操」など，日常的な動作を使用した．
 再生回数が多いものを使用する理由は，その舞踊のエキスパートの動作を
 できるだけ使用したかったからである．再生回数が多いということは，それだけ不特定多数から
-注目を浴びている，感動を与えていると考えられ，その動作の熟練者である可能性が高いと考えた．
+注目を浴びている，感動を与えていると考えられ，その動作の熟練者である可能性が高い．
 \clearpage
 
 \begin{table}[t]
   \begin{center}
     \begin{tabular}{|c|ccc|cc|} \hline
         & \multicolumn{3}{|c|}{学習用} & \multicolumn{2}{|c|}{推論用} \\ \hline
-        &&&&& \\
+        & Elegant1\cite{jpn} & Elegant2\cite{china} & Elegant3\cite{ballet} & Elegant4\cite{balletgroup} & Elegant5\cite{jpngroup}
+      \\
+      Elegant
         & \includegraphics[width=17mm]{images/snaps/japanese_elegant.png}
         & \includegraphics[width=17mm]{images/snaps/chinese_elegant.png}
         & \includegraphics[width=17mm]{images/snaps/ballet_elegant.png}
         & \includegraphics[width=17mm]{images/snaps/ballet_group_elegant.png}
         & \includegraphics[width=17mm]{images/snaps/japanese_group_elegant.png}
       \\
-      優美なダンス & \cite{jpn} & \cite{china} & \cite{ballet} & \cite{balletgroup} & \cite{jpngroup}
+      & Elegant6\cite{thai} & Elegant7\cite{jpn2} & & Elegant8\cite{chinagroup} & Elegant9\cite{belly}
       \\
         & \includegraphics[width=17mm]{images/snaps/thai_elegant.png}
         & \includegraphics[width=17mm]{images/snaps/japanese2_elegant.png}
         &
         & \includegraphics[width=17mm]{images/snaps/chinese_group_elegant.png}
         & \includegraphics[width=17mm]{images/snaps/belly_elegant.png}
-      \\
-        & \cite{thai} & \cite{jpn2} & & \cite{chinagroup} & \cite{belly}
       \\ \hline
-        &&&&& \\
+        & Normal1\cite{ariana} & Normal2\cite{kadokawa} & Normal3\cite{bts} & Normal4\cite{btsgroup} & Normal5\cite{arashi}
+      \\
+      Normal
         & \includegraphics[width=17mm]{images/snaps/ariana_dance.png}
         & \includegraphics[width=17mm]{images/snaps/kadokawa_dream_dance.png}
         & \includegraphics[width=17mm]{images/snaps/bts_dance.png}
         & \includegraphics[width=17mm]{images/snaps/bts_group_dance.png}
         & \includegraphics[width=17mm]{images/snaps/arashi_group_dance.png}
       \\
-      普通のダンス & \cite{ariana} & \cite{kadokawa} & \cite{bts} & \cite{btsgroup} & \cite{arashi}
+      & Normal6\cite{manolo} & Normal7\cite{aito} & & Normal8\cite{hyoga} & Normal9\cite{legit}
       \\
         & \includegraphics[width=17mm]{images/snaps/manolo_dance.png}
         & \includegraphics[width=17mm]{images/snaps/aito_dance.png}
         &
         & \includegraphics[width=17mm]{images/snaps/hyoga_dance.png}
         & \includegraphics[width=17mm]{images/snaps/legit_dance.png}
-      \\
-        & \cite{manolo} & \cite{aito} & & \cite{hyoga} & \cite{legit}
       \\ \hline
-        &&&&& \\
+        & Other1\cite{radio} & Other2\cite{posing} & Other3\cite{boxing} & Other4\cite{radio2} &
+      \\
+      Other
         & \includegraphics[width=17mm]{images/snaps/radio_exer.png}
         & \includegraphics[width=17mm]{images/snaps/posing.png}
         & \includegraphics[width=17mm]{images/snaps/shadowboxing.png}
         & \includegraphics[width=17mm]{images/snaps/radio_exer_2.png}
         &
       \\
-      その他の動作 & \cite{radio} & \cite{posing} & \cite{boxing} & \cite{radio2} &
+        & Other5\cite{running} & Other6\cite{shinkokyu} & Other7\cite{leaves} & &
       \\
         & \includegraphics[width=17mm]{images/snaps/running.png}
         & \includegraphics[width=17mm]{images/snaps/shinkokyu.png}
         & \includegraphics[width=17mm]{images/snaps/leaves.png}
         &
         &
-      \\
-        & \cite{running} & \cite{shinkokyu} & \cite{leaves} & &
       \\ \hline
     \end{tabular}
   \end{center}
@@ -136,11 +136,11 @@
 その配列の平均を取り，255/4に近い順で500画素まで白画素を採用した．
 対象が黒画素であった場合はカウントしない．
 閾値255/4は複数の動画に対し閾値を変えながら制限処理を行なった中で，
-多くの動画で最も効果的に人体の輪郭を得ることができたため，このような値を用いた．
+多くの動画で最も効果的に人体の輪郭を得ることができたため，この値を用いた．
 
-検証段階として，動画データをそのままネットワークにかけて学習した結果，精度が
-ほとんど取れなかった原因として動画データの不統一にあると考え，
-二値に限定し，各ピクセル，動画全体のデータを均一にすることで学習の効率を高めることを試みた．
+検証段階として，動画データをそのままネットワークにかけて学習した結果，分類精度が
+低かった原因が動画データの不統一にあると考え，二値に限定し，
+各ピクセル，動画全体のデータを均一にすることで学習の効率を高めることを試みた．
 
 \begin{figure}[b]
   \begin{center}
@@ -159,32 +159,32 @@
   \label{choice}
 \end{figure}
 
-図\ref{choice}のように動画長方向の各ピクセルに注目する理由は，
+図\ref{choice}のように時間軸方向の各ピクセルに注目する理由は，
 対象の画素の変化量を知りたかったからである．
 例えば手先が移動している場合，手先が元あった場所は背景色に変化するはずである．
 逆に移動先では背景色が手先の色に変化する．
 第1章，論文構成でも述べた通り，今回の研究では動作から優美さを抽出したいので，
 動作の変化，動画データでは画素の変化を取り出したいと言い換えることができる．
-そのために，1フレームごとの静止した画像ではなく，各ピクセルの動画長方向のデータを
+そのために，1フレームごとの静止した画像ではなく，各ピクセルの時間軸方向のデータを
 用いることでデータを動作として扱うことができ，その平均を閾値で順序付けることで
-目標とするに最も近い動作のみを抽出することができると考えた．
+目標とするに最も近い動作のみを抽出することができる．
 \clearpage
 
 \subsection{ネットワーク構造}
-編集した動画をそのまま使用するとフレーム数が多いので動画を複数に分割することを考えた．
-図\ref{range}のように乱数を得た．乱数を視点として指定のフレーム長を切り取った．
+編集した動画をそのまま使用するとフレーム数が多いので動画を複数に分割する．
+図\ref{range}のように乱数を得た．乱数を始点として指定のフレーム長を切り取った．
 それらをバッチ数まで集めた．バッチとは，データをひとまとめにして同時に学習させることである．
-乱数は各データ毎に個別に作成している．
+乱数は各データごとに個別に作成している．
 
 動画群は結合して一つのデータとして扱うため，切り取る範囲が動画の繋ぎ目と被る可能性がある．
 それを防ぐため，図\ref{decide_rand}のように予めそれぞれの動画長方向のフレームを
-動画群から見た絶対数で保存しておく．指定した乱数がそれらの数値-指定フレームであった場合，
+動画群から見た絶対数で保存しておく．指定した乱数から切り取るフレームがそれらの値を含む場合，
 乱数を指定フレーム分追加することで再計算することなく固有の動画から指定範囲切り抜くことができる．
 
-この手法はViViTから着想を得た．ViViTでは動画を指定フレーム，指定ピクセルの
+この手法はViViT\cite{vivit}から着想を得た．ViViTでは動画を指定フレーム，指定ピクセルの
 立方体で切り出し，Transformer Encoderにかけるという手法を取っている．
 切り取った動画を検証するので動画全体を検証することはできないが，フレームを細かく分割することで
-優美さ特定がより円滑に進むと考えた．
+優美さ特定がより円滑に進んだ．
 
 \begin{figure}[b]
   \begin{center}
@@ -212,13 +212,13 @@
 \end{figure}
 
 整形された動画データは図\ref{conv}のような畳み込み層を通過する．
-入力データは[バッチ，フレーム長，画素数（グレースケールなので1），画像の縦データ，画像の横データ]の
+入力データは[バッチ，フレーム長，色チャンネル（グレースケールなので1），画像の縦データ，画像の横データ]の
 5次元データである．これをそのまま処理しようとすると3次元の畳み込みを
 使用する必要があり，動画像として処理したい今回にはそぐわない．
 これを解決するために畳み込み層をバッチ数だけ存在させ，入力データをバッチ数だけ分割した．
-これにより，[フレーム長，画素数（グレースケールなので1），画像の縦データ，画像の横データ]の
+これにより，[フレーム長，色チャンネルグレースケールなので1），画像の縦データ，画像の横データ]の
 4次元データで処理させることができ，フレームをバッチに見立てることで
-畳み込みの得意とする画像としての処理を実現させた．
+畳み込みが得意とする画像としての処理を実現させた．
 \clearpage
 
 \begin{figure}[t]
@@ -229,10 +229,10 @@
   \label{embedding}
 \end{figure}
 
-次に図\ref{embedding}のようなピクセル情報を模した数値行列を同じ畳み込み層に通す．
-この行列は64×64サイズに0から順にインデックス番号を持つ長さ指定フレーム長の行列である．
-Transformerでは位置情報が喪失してしまうので位置情報を足し合わせることをする．
-畳み込み後のデータは加工された動画データなのでインデックス番号を畳み込みすることで
+次に図\ref{embedding}のようなピクセル情報を模した数値行列を，同じ畳み込み層に通す．
+この行列は64×64サイズに0から順にインデックス番号を持つ，長さ指定フレーム長の行列である．
+Transformerでは位置情報が喪失してしまうため，位置情報を足し合わせる．
+畳み込み後のデータは，加工された動画データなので，インデックス番号を畳み込むことで
 同じ次元の位置情報を持たせることを試みた．
 \clearpage
 
@@ -249,9 +249,9 @@ Transformerでは位置情報が喪失してしまうので位置情報を足し
 これもViViTに倣い図\ref{encoder}のような処理にした．実際，ヘッド数やレイヤー数は
 これが最も精度良く推論できた．
 
-最後に全結合層に通す．データを3に集約させるため，層を5つに分割し慎重に取り出した．
-また，前半ではReLU(\ref{relu})活性化関数とすることでデータを減らし，
-後半ではTanh(\ref{tanh})を活性化関数とすることでデータが影響し合えるようにした．
+最後に全結合層に通す．データを3に集約させるため，層を5つに分割し緩やかにデータを縮小した．
+また，前半では(\ref{relu})式に示すReLUを活性化関数とすることでデータを減らし，
+後半では(\ref{tanh})式に示すTanhを活性化関数とすることでデータが影響し合えるようにした．
 
 \begin{equation}
   \left\{
@@ -286,29 +286,33 @@ Transformerでは位置情報が喪失してしまうので位置情報を足し
 
 \begin{table}[b]
   \begin{center}
-    \begin{tabular}{|c|} \hline
-      結果と使用動画 \\ \hline
-        \includegraphics[width=110mm]{images/net_result/result10.png}
+    \begin{tabular}{c}
+        \includegraphics[width=90mm]{images/net_result/result10.png}
       \\
-        \cite{ballet}\cite{thai}\cite{jpn2}
-        \cite{kadokawa}\cite{bts}\cite{manolo}
-        \cite{posing}\cite{boxing}\cite{shinkokyu}\cite{leaves}
-      \\ \hline
-        \includegraphics[width=110mm]{images/net_result/result13.png}
+        Elegant3\cite{ballet},Elegant4\cite{thai},Elegant5\cite{jpn2},
+        Normal2\cite{kadokawa},Normal3\cite{bts},Normal6\cite{manolo},
       \\
-        \cite{jpn}\cite{ballet}\cite{thai}\cite{jpn2}
-        \cite{ariana}\cite{kadokawa}\cite{bts}\cite{manolo}
-        \cite{posing}\cite{boxing}\cite{running}\cite{shinkokyu}\cite{leaves}
-      \\ \hline
-        \includegraphics[width=110mm]{images/net_result/result16.png}
+        Other2\cite{posing},Other3\cite{boxing},Other6\cite{shinkokyu},Other7\cite{leaves}:10動画
       \\
-        \cite{jpn}\cite{china}\cite{ballet}\cite{thai}\cite{jpn2}
-        \cite{ariana}\cite{kadokawa}\cite{bts}\cite{manolo}\cite{aito}
-        \cite{radio}\cite{posing}\cite{boxing}\cite{running}\cite{shinkokyu}\cite{leaves}
-      \\ \hline
+        \includegraphics[width=90mm]{images/net_result/result13.png}
+      \\
+        Elegant1\cite{jpn},Elegant3\cite{ballet},Elegant4\cite{thai},Elegant5\cite{jpn2},
+      \\
+        Normal1\cite{ariana},Normal2\cite{kadokawa},Normal3\cite{bts},Normal6\cite{manolo},
+      \\
+        Other2\cite{posing},Other3\cite{boxing},Other5\cite{running},Other6\cite{shinkokyu},Other7\cite{leaves}:13動画
+      \\
+        \includegraphics[width=90mm]{images/net_result/result16.png}
+      \\
+        Elegant1\cite{jpn},Elegant2\cite{china},Elegant3\cite{ballet},Elegant4\cite{thai},Elegant5\cite{jpn2},
+      \\
+        Normal1\cite{ariana},Normal2\cite{kadokawa},Normal3\cite{bts},Normal6\cite{manolo},Normal7\cite{aito}
+      \\
+        Other1\cite{radio},Other2\cite{posing},Other3\cite{boxing},Other5\cite{running},Other6\cite{shinkokyu},Other7\cite{leaves}:16動画
+      \\
     \end{tabular}
   \end{center}
-  \caption{使用動画別の精度}
+  \caption{使用動画ごとの推定精度}
   \label{result}
 \end{table}
 \clearpage
@@ -323,19 +327,18 @@ Transformerでは位置情報が喪失してしまうので位置情報を足し
 
 \begin{table}[b]
   \begin{center}
-    \begin{tabular}{|c|} \hline
-      結果とバッチサイズ \\ \hline
-        \includegraphics[width=110mm]{images/net_result/batch1.png} \\ batch:1 \\ \hline
-        \includegraphics[width=110mm]{images/net_result/batch10.png} \\ batch:10 \\ \hline
-        \includegraphics[width=110mm]{images/net_result/batch100.png} \\ batch:100 \\ \hline
+    \begin{tabular}{c}
+        \includegraphics[width=110mm]{images/net_result/batch1.png} \\ batchサイズ:1 \\
+        \includegraphics[width=110mm]{images/net_result/batch10.png} \\ batchサイズ:10 \\
+        \includegraphics[width=110mm]{images/net_result/batch100.png} \\ batchサイズ:100 \\
     \end{tabular}
   \end{center}
-  \caption{batch別の精度}
+  \caption{batchごとの推定精度}
   \label{batch}
 \end{table}
 \clearpage
 
-次に学習，エポック毎で損失がどのように推移するか確認した．エポックとは，同一のデータを
+次に学習，エポックごとに損失がどのように推移するか確認した．エポックとは，同一のデータを
 繰り返し学習させることである．
 表\ref{epoch}のように1回目のエポックでほとんど収束して行き，エポックを重ねるごとに
 その値の揺れが小さくなっていることが分かった．
@@ -346,14 +349,13 @@ Transformerでは位置情報が喪失してしまうので位置情報を足し
 
 \begin{table}[b]
   \begin{center}
-    \begin{tabular}{|c|} \hline
-      結果とエポック数 \\ \hline
-        \includegraphics[width=130mm]{images/net_result/epoch_1.pdf} \\ epoch:1 \\ \hline
-        \includegraphics[width=130mm]{images/net_result/epoch_2.pdf} \\ epoch:2 \\ \hline
-        \includegraphics[width=130mm]{images/net_result/epoch_10.pdf} \\ epoch:10 \\ \hline
+    \begin{tabular}{c}
+        \includegraphics[width=130mm]{images/net_result/epoch_1.pdf} \\ epoch:1 \\
+        \includegraphics[width=130mm]{images/net_result/epoch_2.pdf} \\ epoch:2 \\
+        \includegraphics[width=130mm]{images/net_result/epoch_10.pdf} \\ epoch:10 \\
     \end{tabular}
   \end{center}
-  \caption{epoch毎の損失推移}
+  \caption{epochごとの損失推移}
   \label{epoch}
 \end{table}
 \clearpage
