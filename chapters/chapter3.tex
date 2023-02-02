@@ -20,7 +20,7 @@
 
 \subsection{Grad Camを用いた評価}
 作成したネットワークの判断根拠を可視化するために，Pytorch-GradCam\cite{pygradcam}を
-使用した．作成したネットワークはPytorch\cite{pytorch}でできているので，GradCamも
+使用した．作成したネットワークはPytorch\cite{pytorch}を使用しているため，GradCamも
 同じくPytorchでできたものを使用した．
 
 Pytorch-GradCamは入力データに対して，どのように各層が影響するかを順伝播で確認してから，
@@ -42,29 +42,29 @@ Pytorch-GradCamは入力データに対して，どのように各層が影響�
 \begin{table}[t]
   \begin{center}
     \begin{tabular}{|c|c|c|} \hline
-      \begin{minipage}[b]{3cm}
+      \begin{minipage}[b]{1.3cm}
         \centering
-        優美なダンス
-        \vspace*{1cm}
+        優美な\\ダンス
+        \vspace*{0.7cm}
       \end{minipage}
-        & \includegraphics[width=50mm]{images/cam/chinese.png}
-        & \includegraphics[width=50mm]{images/cam/japanese.png}
+        & \includegraphics[width=48mm]{images/cam/chinese.png}
+        & \includegraphics[width=48mm]{images/cam/japanese.png}
       \\ \hline
-      \begin{minipage}[b]{3cm}
+      \begin{minipage}[b]{1.3cm}
         \centering
-        普通のダンス
-        \vspace*{1cm}
+        普通の\\ダンス
+        \vspace*{0.7cm}
       \end{minipage}
-        & \includegraphics[width=50mm]{images/cam/kadokawa.png}
-        & \includegraphics[width=50mm]{images/cam/aito.png}
+        & \includegraphics[width=48mm]{images/cam/kadokawa.png}
+        & \includegraphics[width=48mm]{images/cam/aito.png}
       \\ \hline
-      \begin{minipage}[b]{3cm}
+      \begin{minipage}[b]{1.3cm}
         \centering
-        その他の動作
-        \vspace*{1cm}
+        その他の\\動作
+        \vspace*{0.7cm}
       \end{minipage}
-        & \includegraphics[width=50mm]{images/cam/radio.png}
-        & \includegraphics[width=50mm]{images/cam/running.png}
+        & \includegraphics[width=48mm]{images/cam/radio.png}
+        & \includegraphics[width=48mm]{images/cam/running.png}
       \\ \hline
     \end{tabular}
   \end{center}
@@ -222,7 +222,7 @@ Grad Camの動画生成と同様の手法で，
 表\ref{json}のように動画から体の部位を抽出できるAIフレームワークのOpenpose\cite{openpose}を
 使用して手先軌道を取得し，特徴の意図を汲み取る検証も行ったが，
 外れ値がデータのほとんどを占めており，
-youtubeから取得した画素数の少ない動画では，手先軌道の抽出は不可能であった．
+YouTubeから取得した画素数の少ない動画では，手先軌道の抽出は不可能であった．
 Grad Camの結果から考察した仮説である
 \begin{enumerate}
   \item 優美なダンスは手足を頻繁に使う
@@ -234,7 +234,7 @@ Grad Camの結果から考察した仮説である
 
 確率分布の可視化精度の向上として挙げられることとして，分類数を増やすことや，
 同じ確率の数値であっても，特徴を取り出すような手法を
-開発できればその確率の特徴を見ることが可能である．
+開発できればその確率の特徴を観測することが可能である．
 
 \begin{table}[b]
   \begin{center}
